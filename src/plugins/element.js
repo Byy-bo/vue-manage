@@ -1,5 +1,7 @@
 import Vue from 'vue'
-import { Button, Switch } from 'element-ui'
+import { Button, Form, Input, FormItem } from 'element-ui'
 
 Vue.use(Button)
-Vue.use(Switch)
+Vue.use(Form)
+Vue.use(Input)
+Vue.use(FormItem)
