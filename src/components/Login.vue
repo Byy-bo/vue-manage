@@ -49,7 +49,7 @@ export default {
             if (!bool) return false
             // 校验成功
             const { data } = await this.$axios.post('login', this.loginForm)
-            console.log(data)
+            // console.log(data)
             if (data.meta.status !== 200) {
                 this.$message.error(data.meta.msg)
             } else {
@@ -59,7 +59,7 @@ export default {
                     type: 'success'
                 })
                 // 记录我token
-                window.sessionStorage.setItem('token', data.token)
+                window.sessionStorage.setItem('token', data.data.token)
                 // 跳转首页
                 this.$router.push('/home')
             }

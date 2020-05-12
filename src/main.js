@@ -14,6 +14,11 @@ axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
 
 // 将我的axios加入到vue实例当中
 Vue.prototype.$axios = axios
+// 请求拦截器，，请求之前配置我的token
+axios.interceptors.request.use(config => {
+  config.headers.Authorization = window.sessionStorage.getItem('token')
+  return config
+})
 // 消息提示
 Vue.prototype.$message = Message
 
