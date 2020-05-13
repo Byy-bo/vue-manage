@@ -10,3 +10,6 @@ body {
 .el-form .el-form-item.is-success .el-input__inner {
   border: 1px solid greenyellow;
 }
+#el-form-item label.el-form-item__label {
+  text-align: left;
+}

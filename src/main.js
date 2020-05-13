@@ -8,7 +8,7 @@ import './assets/manage.less'
 import './assets/fonts/iconfont.css'
 // 导入我的axios
 import axios from 'axios'
-import { Message } from 'element-ui'
+// import { Message, MessageBox } from 'element-ui'
 // 配置公共的url
 axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
 
@@ -19,8 +19,10 @@ axios.interceptors.request.use(config => {
   config.headers.Authorization = window.sessionStorage.getItem('token')
   return config
 })
-// 消息提示
-Vue.prototype.$message = Message
+// // 消息提示
+// Vue.prototype.$message = Message
+// // 消息弹框
+// Vue.prototype.$confirm = MessageBox
 
 Vue.config.productionTip = false
 

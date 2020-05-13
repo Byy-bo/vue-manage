@@ -1,5 +1,13 @@
 import Vue from 'vue'
-import { Button, Form, Input, FormItem, Container, Header, Main, Aside, Menu, Submenu, MenuItem, RadioGroup, RadioButton } from 'element-ui'
+import {
+        Button, Form, Input, FormItem,
+        Container, Header, Main, Aside,
+        Menu, Submenu, MenuItem, RadioGroup,
+        RadioButton, Breadcrumb, BreadcrumbItem,
+        Card, Row, Col, Table, TableColumn, Switch,
+        Pagination, Tooltip, Dialog, Message, MessageBox,
+        Select, Option
+        } from 'element-ui'
 
 Vue.use(Button)
 Vue.use(Form)
@@ -14,3 +22,20 @@ Vue.use(Submenu)
 Vue.use(MenuItem)
 Vue.use(RadioGroup)
 Vue.use(RadioButton)
+Vue.use(Breadcrumb)
+Vue.use(BreadcrumbItem)
+Vue.use(Card)
+Vue.use(Row)
+Vue.use(Col)
+Vue.use(Table)
+Vue.use(TableColumn)
+Vue.use(Switch)
+Vue.use(Pagination)
+Vue.use(Tooltip)
+Vue.use(Dialog)
+Vue.use(Select)
+Vue.use(Option)
+// 消息提示
+Vue.prototype.$message = Message
+// 消息弹框
+Vue.prototype.$confirm = MessageBox

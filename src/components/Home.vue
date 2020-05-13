@@ -8,22 +8,23 @@
      </el-header>
      <el-container>
        <el-aside :width="isCollapse ? '64px' : '200px' ">
-         <div class="toggle-button" @click="toggleButton"> | | | </div>
-         <el-menu router unique-opened background-color="#333744" text-color="#fff" active-text-color="#409EFF"
+         <div class="toggle_button" @click="toggleButton"> | | | </div>
+         <el-menu router unique-opened :default-active="activeIndex" ref="elMenu" @open="upOpen" background-color="#333744" text-color="#fff" active-text-color="#409EFF"
           :collapse="isCollapse" :collapse-transition="false">
            <el-submenu :index="item.id+''" v-for="item in menus" :key="item.id">
              <template slot="title">
                <i :class="iconsObj[item.id]"></i>
                <span>{{ item.authName }}</span>
              </template>
-             <el-menu-item :index="childItem.path" v-for="childItem in item.children" :key="childItem.id">
-                  <i class="el-icon-menu"></i>
+             <el-menu-item :index="childItem.path" @click="saveIndex(childItem.path, item.authName, childItem.authName)" v-for="childItem in item.children" :key="childItem.id">
+                 <i class="el-icon-menu"></i>
                  <span>{{ childItem.authName }}</span>
              </el-menu-item>
            </el-submenu>
          </el-menu>
        </el-aside>
        <el-main>
+           <home-breadcrumb v-if="activeIndex" :authName="authName"></home-breadcrumb>
            <router-view />
        </el-main>
      </el-container>
@@ -32,6 +33,8 @@
 </template>
 
 <script>
+// 导入子组件
+import homeBreadcrumb from './home/HomeBreadcrumb.vue'
  export default {
   name: 'hoem',
   data () {
@@ -44,16 +47,24 @@
         102:'iconfont icon-danju',
         145:'iconfont icon-baobiao'
       },
-      isCollapse: false
+      isCollapse: false,
+      activeIndex: '',
+      authName: {
+        itemAuthName: '',
+        childAuthName: ''
+      },
+      indexId: ''
    }
   },
   created () {
+      // window.sessionStorage.removeItem('activeIndex')
       this.getHomeList()
+      this.homeGet()
   },
   methods: {
       async getHomeList() {
           const { data } = await this.$axios.get('menus')
-          console.log(data)
+          // console.log(data)
           if (data.meta.status !== 200) {
               return this.$message.error(data.meta.msg)
           }
@@ -62,7 +73,7 @@
       // 登出
       getLoginOut() {
         // 删除我的本地缓存的token
-        window.sessionStorage.removeItem('token')
+        window.sessionStorage.clear()
         // 跳转到login页面
         this.$router.push({ path: '/login' })
         // 友好提示
@@ -71,9 +82,40 @@
       // 折叠菜单
       toggleButton() {
           this.isCollapse = !this.isCollapse
+      },
+      // 激活我的子菜单,面包屑导航
+      saveIndex(index, fName, sName) {
+          this.activeIndex = index
+          this.authName.itemAuthName = fName
+          this.authName.childAuthName = sName
+          // 保存在我的本地缓存当中
+          window.sessionStorage.setItem('activeIndex', index)
+          window.sessionStorage.setItem('itemAuthName', fName)
+          window.sessionStorage.setItem('childAuthName', sName)
+      },
+      homeGet() {
+        // 页面刷新的时候获取到我本地的激活状态,面包屑导航
+        this.activeIndex = window.sessionStorage.getItem('activeIndex')
+        this.authName.itemAuthName = window.sessionStorage.getItem('itemAuthName')
+        this.authName.childAuthName = window.sessionStorage.getItem('childAuthName')
+      },
+      upOpen(key) {
+          this.indexId = key + ''
       }
   },
   components: {
+      homeBreadcrumb
+  },
+   watch: {
+    $route(to) {
+      if (to.path === '/welcome') {
+        window.sessionStorage.removeItem('activeIndex')
+        window.sessionStorage.removeItem('itemAuthName')
+        window.sessionStorage.removeItem('childAuthName')
+        this.homeGet()
+        this.$refs.elMenu.close(this.indexId)
+      }
+    }
   }
  }
 </script>
@@ -114,10 +156,10 @@
             .el-aside{
                 position: relative;
                 padding-top: 24px;
-                .toggle-button{
+                .toggle_button{
                     cursor: pointer;
                     position: absolute;
-                    width: 100%;
+                    width: calc(100% - 1px);
                     height: 24px;
                     line-height: 24px;
                     color: #ffffff;
