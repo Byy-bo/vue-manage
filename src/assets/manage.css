@@ -13,3 +13,6 @@ body {
 #el-form-item label.el-form-item__label {
   text-align: left;
 }
+.el-table {
+  font-size: 12px;
+}

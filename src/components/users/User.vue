@@ -166,7 +166,7 @@
           ],
           password: [
             { required: true, message: '请输入密码', trigger: 'blur' },
-            { min: 6, max: 16, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+            { min: 6, max: 16, message: '长度在 6 到 16 个字符', trigger: 'blur' }
           ],
           email: [
             { required: true, message: '请输入邮箱', trigger: 'blur' },
@@ -360,7 +360,6 @@
 <style lang="less" scoped>
     .el-table{
         margin: 20px 0;
-        font-size: 12px;
     }
     .fp_role{
         margin: 20px 0;
