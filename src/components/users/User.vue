@@ -273,7 +273,7 @@
         if (confirm === 'confirm') {
             const { data: res } = await this.$axios.delete(`users/${userData.id}`)
             console.log(res)
-            if (res.meta.status !== 200) return this.$message.error('删除失败')
+            if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
             this.$message({
                     message: '删除成功',
                     type: 'success'
@@ -286,13 +286,16 @@
         }
     },
     // 修改用户
-    xgUser(userData) {
+    async xgUser(userData) {
+        const { data: res } = await this.$axios.get(`users/${userData.id}`)
+        console.log(res)
+        if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
         // 存我的id
-        this.upDateForm.id = userData.id
+        this.upDateForm.id = res.data.id
         // 显示对应的信息
-        this.upDateForm.username = userData.username
-        this.upDateForm.email = userData.email
-        this.upDateForm.mobile = userData.mobile
+        this.upDateForm.username = res.data.username
+        this.upDateForm.email = res.data.email
+        this.upDateForm.mobile = res.data.mobile
         // 打开模态框
         this.dialogVisibleXg = true
     },
@@ -334,13 +337,11 @@
         if (!this.fpForm.roleAc) return this.$message.error('请选择正确的角色')
         console.log(this.fpForm.userId)
         console.log(this.fpForm.roleAc)
-        const { data: res } = await this.$axios.put(`users/${this.fpForm.userId}`, {
-            role: this.fpForm.roleAc,
-            email: this.fpForm.email,
-            mobile: this.fpForm.mobile
+        const { data: res } = await this.$axios.put(`users/${this.fpForm.userId}/role`, {
+            rid: this.fpForm.roleAc
         })
         console.log(res)
-         if (res.meta.status !== 200) return this.$message.error('更新角色失败，请稍后再试')
+         if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
             this.$message({
                     message: '更新角色成功',
                     type: 'success'
@@ -359,6 +360,7 @@
 <style lang="less" scoped>
     .el-table{
         margin: 20px 0;
+        font-size: 12px;
     }
     .fp_role{
         margin: 20px 0;
