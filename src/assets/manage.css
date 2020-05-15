@@ -16,3 +16,6 @@ body {
 .el-table {
   font-size: 12px;
 }
+.el-cascader-panel {
+  height: 200px !important;
+}

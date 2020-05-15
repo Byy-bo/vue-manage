@@ -6,7 +6,7 @@ import {
         RadioButton, Breadcrumb, BreadcrumbItem,
         Card, Row, Col, Table, TableColumn, Switch,
         Pagination, Tooltip, Dialog, Message, MessageBox,
-        Select, Option, Tag, Tree
+        Select, Option, Tag, Tree, Cascader
         } from 'element-ui'
 
 Vue.use(Button)
@@ -37,6 +37,7 @@ Vue.use(Select)
 Vue.use(Option)
 Vue.use(Tag)
 Vue.use(Tree)
+Vue.use(Cascader)
 // 消息提示
 Vue.prototype.$message = Message
 // 消息弹框

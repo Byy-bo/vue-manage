@@ -35,7 +35,7 @@
          </el-table>
      </el-card>
 
-     <!-- 添加角色对话框 -->
+    <!-- 添加角色对话框 -->
     <el-dialog title="添加角色" :visible.sync="dialogVisible" width="50%" @close="roleClose(1)">
         <el-form :model="addForm" :rules="AddRules" ref="AddRuleForm" label-width="80px" class="demo-ruleForm">
             <el-form-item label="角色名称" prop="roleName">
@@ -51,7 +51,7 @@
         </span>
     </el-dialog>
 
-     <!-- 编辑角色对话框 -->
+    <!-- 编辑角色对话框 -->
     <el-dialog title="编辑角色" :visible.sync="dialogVisibleUp" width="50%" @close="roleClose(2)">
         <el-form :model="upDateForm" :rules="AddRules" ref="upDateRuleForm" label-width="80px" class="demo-ruleForm">
             <el-form-item label="角色名称" prop="roleName">

@@ -8,7 +8,11 @@ import './assets/manage.less'
 import './assets/fonts/iconfont.css'
 // 导入我的axios
 import axios from 'axios'
+// 导入树形表格插件
+import TreeTable from 'vue-table-with-tree-grid'
 // import { Message, MessageBox } from 'element-ui'
+// 注册
+Vue.component('tree-table', TreeTable)
 // 配置公共的url
 axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
 
