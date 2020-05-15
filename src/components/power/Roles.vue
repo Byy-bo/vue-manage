@@ -69,7 +69,9 @@
 
     <!-- 分配角色对话框 -->
     <el-dialog title="分配角色" :visible.sync="dialogVisibleFp" width="36%" @close="roleClose(3)">
-        <span>这是分配角色的对话框</span>
+        <el-tree :data="rightsList" show-checkbox node-key="id" default-expand-all
+        :default-checked-keys="defaultKeys" :props="defaultProps" ref="treeRoleRights">
+        </el-tree>
         <span slot="footer" class="dialog-footer">
             <el-button @click="dialogVisibleFp = false">取 消</el-button>
             <el-button type="primary" @click="fpRole">确 定</el-button>
@@ -106,7 +108,13 @@
             { required: true, message: '请输入角色描述', trigger: 'blur' },
             { min: 3, max: 12, message: '长度在 3 到 12 个字符', trigger: 'blur' }
           ]
-       }
+       },
+       defaultKeys: [],
+       defaultProps: {
+           label: 'authName',
+           children: 'children'
+       },
+       roleId: ''
    }
   },
   created () {
@@ -164,6 +172,8 @@
             this.$refs.AddRuleForm.resetFields()
         } else if (num === 2) {
             this.$refs.upDateRuleForm.resetFields()
+        } else if (num === 3) {
+            this.defaultKeys = []
         }
     },
     // 删除对应的角色
@@ -222,13 +232,46 @@
             this.dialogVisibleUp = false
         })
     },
-    // 显示渲染分配角色对话框
+    // 获取权限列表
+    async getRightsList() {
+        const { data: res } = await this.$axios.get('rights/tree')
+        console.log(res)
+        if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+        this.rightsList = res.data
+    },
+    // 显示渲染分配权限对话框
     fpXsRole(roles) {
+        // 存储我对应的id
+        this.roleId = roles.id
         // 显示对应的对话框
         this.dialogVisibleFp = true
+        // 显示权限
+        this.getRightsList()
+        // 渲染选中的权限
+        this.getAcRights(roles)
     },
-    // 分配角色请求
-    fpRole() {
+    // 渲染选中的权限
+    getAcRights(roles) {
+        // 判断是否是3级列表
+        if (!roles.children) return this.defaultKeys.push(roles.id)
+        // 不是的话继续执行
+        roles.children.forEach(item => this.getAcRights(item))
+    },
+    // 分配权限请求
+    async fpRole() {
+        const keys = [...this.$refs.treeRoleRights.getCheckedKeys(), ...this.$refs.treeRoleRights.getHalfCheckedKeys()].join(',')
+        // 请求
+        const { data: res } = await this.$axios.post(`roles/${this.roleId}/rights`, {
+            rids: keys
+        })
+        console.log(res)
+        if (res.meta.status !== 200) return this.$message.error('权限更改失败, 请稍后再试')
+        this.$message({
+            message: '权限更改成功',
+            type: 'success'
+        })
+        // 重新渲染数据
+        this.getRoles()
         // 关闭对话框
         this.dialogVisibleFp = false
     }
