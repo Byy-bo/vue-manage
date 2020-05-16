@@ -157,7 +157,7 @@
         // 显示对话框
         this.dialogVisible = true
     },
-    // 监听我的
+    // 监听我的选择的分类
     handleChange() {
         // console.log(this.cateValue)
         // 选择了分类
@@ -198,6 +198,7 @@
             message: '删除分类成功',
             type: 'success'
         })
+        this.cateList.pagenum = (this.cateTotal - 1) / (this.cateList.pagenum - 1) ? this.cateList.pagenum - 1 : this.cateList.pagenum
         // 重新渲染数据
         this.getCate()
     },

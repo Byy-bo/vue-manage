@@ -278,7 +278,7 @@
                     message: '删除成功',
                     type: 'success'
                 })
-            this.usersObj.pagenum = Math.ceil((this.userTotal - 1) / this.usersObj.pagesize)
+            this.usersObj.pagenum = (this.userTotal - 1) / (this.usersObj.pagenum - 1) ? this.usersObj.pagenum - 1 : this.usersObj.pagenum
             // 重新渲染数据
             this.getUsers()
         } else {
