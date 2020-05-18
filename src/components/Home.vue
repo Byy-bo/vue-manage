@@ -9,14 +9,15 @@
      <el-container>
        <el-aside :width="isCollapse ? '64px' : '200px' ">
          <div class="toggle_button" @click="toggleButton"> | | | </div>
-         <el-menu router unique-opened :default-active="activeIndex" ref="elMenu" @open="upOpen" background-color="#333744" text-color="#fff" active-text-color="#409EFF"
+         <el-menu router unique-opened :default-active="activeIndex" ref="elMenu" @open="upOpen"
+         background-color="#333744" text-color="#fff" active-text-color="#409EFF"
           :collapse="isCollapse" :collapse-transition="false">
            <el-submenu :index="item.id+''" v-for="item in menus" :key="item.id">
              <template slot="title">
                <i :class="iconsObj[item.id]"></i>
                <span>{{ item.authName }}</span>
              </template>
-             <el-menu-item :index="childItem.path" @click="saveIndex(childItem.path, item.authName, childItem.authName)" v-for="childItem in item.children" :key="childItem.id">
+             <el-menu-item :index="'/'+childItem.path" @click="saveIndex(childItem.path, item.authName, childItem.authName)" v-for="childItem in item.children" :key="childItem.id">
                  <i class="el-icon-menu"></i>
                  <span>{{ childItem.authName }}</span>
              </el-menu-item>
@@ -85,11 +86,11 @@ import homeBreadcrumb from './home/HomeBreadcrumb.vue'
       },
       // 激活我的子菜单,面包屑导航
       saveIndex(index, fName, sName) {
-          this.activeIndex = index
+          this.activeIndex = '/' + index
           this.authName.itemAuthName = fName
           this.authName.childAuthName = sName
           // 保存在我的本地缓存当中
-          window.sessionStorage.setItem('activeIndex', index)
+          window.sessionStorage.setItem('activeIndex', '/' + index)
           window.sessionStorage.setItem('itemAuthName', fName)
           window.sessionStorage.setItem('childAuthName', sName)
       },
@@ -114,6 +115,12 @@ import homeBreadcrumb from './home/HomeBreadcrumb.vue'
         window.sessionStorage.removeItem('childAuthName')
         this.homeGet()
         this.$refs.elMenu.close(this.indexId)
+      } else if (to.path === '/goods/add') {
+        window.sessionStorage.setItem('childAuthName', '添加商品')
+        this.homeGet()
+      } else if (to.path === '/goods') {
+        window.sessionStorage.setItem('childAuthName', '商品列表')
+        this.homeGet()
       }
     }
   }

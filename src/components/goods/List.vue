@@ -11,7 +11,7 @@
             </el-col>
             <el-col :span="4">
                 <div class="grid-content bg-purple">
-                    <el-button type="primary">添加商品</el-button>
+                    <el-button type="primary" @click="toAddList">添加商品</el-button>
                 </div>
             </el-col>
         </el-row>
@@ -199,6 +199,10 @@
          // 消失对话框
          this.dialogVisibleUp = false
       })
+   },
+   // 添加商品跳转
+   toAddList() {
+      this.$router.push({ path: '/goods/add' })
    }
   },
   components: {

@@ -7,7 +7,7 @@ import {
         Card, Row, Col, Table, TableColumn, Switch,
         Pagination, Tooltip, Dialog, Message, MessageBox,
         Select, Option, Tag, Tree, Cascader, Alert, Tabs,
-        TabPane
+        TabPane, Steps, Step, Checkbox, Upload
         } from 'element-ui'
 
 Vue.use(Button)
@@ -42,6 +42,10 @@ Vue.use(Cascader)
 Vue.use(Alert)
 Vue.use(Tabs)
 Vue.use(TabPane)
+Vue.use(Steps)
+Vue.use(Step)
+Vue.use(Checkbox)
+Vue.use(Upload)
 // 消息提示
 Vue.prototype.$message = Message
 // 消息弹框

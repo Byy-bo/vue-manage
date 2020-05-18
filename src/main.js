@@ -11,8 +11,16 @@ import axios from 'axios'
 // 导入树形表格插件
 import TreeTable from 'vue-table-with-tree-grid'
 // import { Message, MessageBox } from 'element-ui'
+// 导入文本编辑插件
+import vueQuillEditor from 'vue-quill-editor'
+// 导入样式
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 // 注册
 Vue.component('tree-table', TreeTable)
+// 全局注册
+Vue.use(vueQuillEditor)
 // 配置公共的url
 axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
 
