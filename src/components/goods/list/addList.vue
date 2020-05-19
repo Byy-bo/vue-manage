@@ -17,13 +17,13 @@
                         <el-input v-model="addRuleForm.goods_name"></el-input>
                     </el-form-item>
                     <el-form-item label="商品价格" prop="goods_price">
-                        <el-input type="number" v-model="addRuleForm.goods_price"></el-input>
+                        <el-input type="number" v-model.number="addRuleForm.goods_price"></el-input>
                     </el-form-item>
                     <el-form-item label="商品重量" prop="goods_weight">
-                        <el-input type="number"  v-model="addRuleForm.goods_weight"></el-input>
+                        <el-input type="number"  v-model.number="addRuleForm.goods_weight"></el-input>
                     </el-form-item>
                     <el-form-item label="商品数量" prop="goods_number">
-                        <el-input type="number"  v-model="addRuleForm.goods_number"></el-input>
+                        <el-input type="number"  v-model.number="addRuleForm.goods_number"></el-input>
                     </el-form-item>
                     <el-form-item label="商品分类" prop="goods_cat">
                         <br />
@@ -35,25 +35,36 @@
                     <el-row>
                         <el-col v-for="item in checkData" :key="item.attr_id">
                             <p>{{ item.attr_name }}</p>
-                            <el-checkbox v-for="itemT in item.attr_vals" :key="itemT.id" checked :label="itemT" border></el-checkbox>
+                            <el-checkbox-group v-model="item.attr_vals">
+                                <el-checkbox v-for="itemT in item.attr_vals" :key="itemT" :label="itemT" border></el-checkbox>
+                            </el-checkbox-group>
                         </el-col>
                     </el-row>
                 </el-tab-pane>
-                <el-tab-pane label="商品属性" name="2">商品属性</el-tab-pane>
+                <el-tab-pane label="商品属性" name="2">
+                    <el-form-item v-for="item in onlyData" :key="item.attr_id" :label="item.attr_name">
+                        <el-input v-model="item.attr_vals"></el-input>
+                    </el-form-item>
+                </el-tab-pane>
                 <el-tab-pane label="商品图片" name="3">
-                    <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/"
-                    :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove"
-                    multiple :limit="3" :on-exceed="handleExceed" :file-list="fileList">
+                    <el-upload class="upload-demo" :action="uploadUrl"
+                    :on-preview="handlePreview" :on-remove="handleRemove" multiple list-type="picture"
+                    :headers="headerObj"  :on-success="handleSuccess">
                         <el-button size="small" type="primary">点击上传</el-button>
                     </el-upload>
                 </el-tab-pane>
                 <el-tab-pane label="商品内容" name="4">
                     <quill-editor v-model="addRuleForm.goods_introduce"></quill-editor>
-                    <el-button type="primary">添加商品</el-button>
+                    <el-button type="primary" @click="addGood">添加商品</el-button>
                 </el-tab-pane>
             </el-tabs>
         </el-form>
      </el-card>
+
+     <!-- 预览图片的对话框 -->
+     <el-dialog title="图片预览" :visible.sync="dialogVisiblePic" width="50%">
+        <img :src="picPath" alt="" width="100%">
+    </el-dialog>
  </div>
 </template>
 
@@ -63,6 +74,7 @@
   data () {
    return {
        checkData: [],
+       onlyData: [],
        activeIndex: 0,
        tabPosition: 'left',
        activeName: '0',
@@ -72,7 +84,9 @@
            goods_weight: '',
            goods_number: '',
            goods_cat: [],
-           goods_introduce: ''
+           goods_introduce: '',
+           pics: [],
+           attrs: []
        },
        paramsOptions: [],
        paramsProps: {
@@ -83,7 +97,7 @@
        addRules: {
           goods_name: [
             { required: true, message: '请输入商品名称', trigger: 'blur' },
-            { min: 16, max: 66, message: '长度在 16 到 66 个字符', trigger: 'blur' }
+            { min: 2, max: 8, message: '长度在 2 到 8 个字符', trigger: 'blur' }
           ],
           goods_price: [
             { required: true, message: '请输入商品价格', trigger: 'blur' }
@@ -98,7 +112,12 @@
             { required: true, message: '请选择商品三级分类', trigger: 'change' }
           ]
        },
-       fileList: []
+       uploadUrl: 'http://127.0.0.1:8888/api/private/v1/upload',
+       headerObj: {
+           Authorization: window.sessionStorage.getItem('token')
+       },
+       picPath: '',
+       dialogVisiblePic: false
    }
   },
   created() {
@@ -106,8 +125,33 @@
   },
   methods: {
     // 监听标签页的选择
-    handleClick() {
+    async handleClick() {
         this.activeIndex = this.activeName
+        if (this.activeIndex === '1') {
+            const { data: res } = await this.$axios.get(`categories/${this.addRuleForm.goods_cat[this.addRuleForm.goods_cat.length - 1]}/attributes`, {
+                params: {
+                    sel: 'many'
+                }
+            })
+            console.log(res)
+            if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+            // 处理我的数据
+            res.data.forEach(item => {
+                item.attr_vals = item.attr_vals.length ? item.attr_vals.split(',') : []
+            })
+            // 赋值
+            this.checkData = res.data
+        } else if (this.activeIndex === '2') {
+            const { data: res } = await this.$axios.get(`categories/${this.addRuleForm.goods_cat[this.addRuleForm.goods_cat.length - 1]}/attributes`, {
+                params: {
+                    sel: 'only'
+                }
+            })
+            console.log(res)
+            if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+            // 赋值
+            this.onlyData = res.data
+        }
     },
     // 离开某个标签页之前
     handleLeave(newIndex, oldIndex) {
@@ -131,34 +175,78 @@
         this.paramsOptions = res.data
     },
     // 级联选择后
-    async handleChange() {
+    handleChange() {
         // 判断是否是三级分类
         if (this.addRuleForm.goods_cat.length !== 3) {
             this.addRuleForm.goods_cat = []
-            return
         }
-        const { data: res } = await this.$axios.get(`categories/${this.addRuleForm.goods_cat[this.addRuleForm.goods_cat.length - 1]}/attributes`, {
-            params: {
-                sel: 'many'
-            }
-        })
-        console.log(res)
-        if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
-        // 处理我的数据
-        res.data.forEach(item => {
-            item.attr_vals = item.attr_vals.length ? item.attr_vals.split(',') : []
-        })
-        // 赋值
-        this.checkData = res.data
     },
     // 操作上传图片
-    handlePreview() {
+    // 预览图片
+    handlePreview(file) {
+        // console.log(file)
+        this.picPath = file.response.data.url
+        // 显示对话框
+        this.dialogVisiblePic = true
     },
-    handleRemove() {
+    // 删除图片
+    handleRemove(file) {
+        // 删除数组里面的对应的
+        const filePath = file.response.data.tmp_path
+        const index = this.addRuleForm.pics.findIndex(item => item.pic === filePath)
+        this.addRuleForm.pics.splice(index, 1)
     },
-    beforeRemove() {
+    // 监听图片上传成功之后
+    handleSuccess(file) {
+        // console.log(file)
+        // 添加到数组
+        this.addRuleForm.pics.push({ pic: file.data.tmp_path })
     },
-    handleExceed() {
+    // 点击添加商品
+    addGood() {
+        this.$refs.addRuleForm.validate(async valid => {
+            if (!valid) return this.$message.error('请填写正确的表单字段')
+            // 处理我的attrs
+            // 动态参数
+            this.checkData.forEach(item => {
+                const newObj = {
+                    attr_id: item.attr_id,
+                    attr_value: item.attr_vals.join(',')
+                }
+                this.addRuleForm.attrs.push(newObj)
+            })
+            // 静态属性
+            this.onlyData.forEach(item => {
+                const newObj = {
+                    attr_id: item.attr_id,
+                    attr_value: item.attr_vals
+                }
+                this.addRuleForm.attrs.push(newObj)
+            })
+            this.addRuleForm.goods_cat = this.addRuleForm.goods_cat.join(',')
+            // console.log(this.addRuleForm.attrs)
+            console.log(this.addRuleForm)
+            const { data: res } = await this.$axios.post('goods', this.addRuleForm)
+            // console.log(res)
+            if (res.meta.status !== 201) return this.$message.error('添加失败')
+            this.$message({
+                message: '添加成功, 稍等一会',
+                type: 'success'
+            })
+            // 控制步骤条变成完成状态
+            this.activeIndex = 6
+        })
+    }
+  },
+  watch: {
+    // 监听我的添加商品是否完成
+    activeIndex() {
+        if (this.activeIndex === 6) {
+            // 代表添加成功，延迟跳转
+            setTimeout(() => {
+                this.$router.push({ path: '/goods' })
+            }, 3600)
+        }
     }
   },
   components: {
