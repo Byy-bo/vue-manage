@@ -2,7 +2,7 @@
  <div>
      <el-card>
          <el-button type="primary" @click="dialogVisible = true">添加角色</el-button>
-         <el-table :data='rolesList' border stripe>
+         <el-table row-key="id" :data='rolesList' border stripe>
              <el-table-column type="expand">
                  <template #default="roles">
                      <el-row v-for="(itemOne, index) in roles.row.children" :key="itemOne.id" :class="['bo', 'cen', index===0?'to':'']">

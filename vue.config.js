@@ -14,8 +14,8 @@ module.exports = {
                 axios:'axios',
                 lodash:'_',
                 echarts:'echarts',
-                nprogress:'Nprogress',
-                'vue-quill-editor':'vueQuillEditor'
+                nprogress:'NProgress',
+                'vue-quill-editor':'VueQuillEditor'
             })
             //使用插件
             config.plugin('html').tap(args=>{

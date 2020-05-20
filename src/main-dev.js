@@ -12,20 +12,20 @@ import axios from 'axios'
 import TreeTable from 'vue-table-with-tree-grid'
 // import { Message, MessageBox } from 'element-ui'
 // 导入文本编辑插件
-import vueQuillEditor from 'vue-quill-editor'
+import VueQuillEditor from 'vue-quill-editor'
 // 导入进度条
-import Nprogress from 'nprogress'
+import NProgress from 'nprogress'
 // 导入文本编辑样式
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 // 导入进度条的样式
 import 'nprogress/nprogress.css'
-Nprogress.configure({ showSpinner: false })
+NProgress.configure({ showSpinner: false })
 // 注册
 Vue.component('tree-table', TreeTable)
 // 全局注册
-Vue.use(vueQuillEditor)
+Vue.use(VueQuillEditor)
 // 配置公共的url
 axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
 
@@ -34,14 +34,14 @@ Vue.prototype.$axios = axios
 // 请求拦截器，，请求之前配置我的token
 axios.interceptors.request.use(config => {
   // 请求前添加进度条
-  Nprogress.start()
+  NProgress.start()
   config.headers.Authorization = window.sessionStorage.getItem('token')
   return config
 })
 // 响应拦截器
 axios.interceptors.response.use(data => {
   // 响应回来介绍进度条
-  Nprogress.done()
+  NProgress.done()
   return data
 })
 // // 消息提示
